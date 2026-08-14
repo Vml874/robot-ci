@@ -1,0 +1,20 @@
+#Brings up the MCP2515 CAN controller on the Neurobionics interface board
+#Waits on the can0 device, which only exists once the mcp2515-can0 overlay
+#has been applied by configure-interface-board.service and the Pi rebooted
+
+[Unit]
+Description=Bring up CAN interface can0
+Requires=sys-subsystem-net-devices-can0.device
+After=sys-subsystem-net-devices-can0.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=-/etc/default/can0
+# Tolerate the interface already being up so a restart is not a failure
+ExecStart=-/sbin/ip link set can0 up type can bitrate 1000000
+ExecStart=/sbin/ip link set can0 txqueuelen 65536
+ExecStop=/sbin/ip link set can0 down
+
+[Install]
+WantedBy=multi-user.target
