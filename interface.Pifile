@@ -1,12 +1,13 @@
-INSTALL "./services/turn-on-3v3.service" "/lib/systemd/system/turn-on-3v3.service"
-INSTALL "./scripts/turn-on-3v3.py" "/etc/turn-on-3v3.py"
 INSTALL "./services/configure-interface-board.service" "/lib/systemd/system/configure-interface-board.service"
 INSTALL "./scripts/configure-interface-board.sh" "/etc/configure-interface-board.sh"
+INSTALL "./services/can0.service" "/lib/systemd/system/can0.service"
 
-RUN chmod +x /etc/turn-on-3v3.py
 RUN chmod +x /etc/configure-interface-board.sh
-RUN chmod 644 /lib/systemd/system/turn-on-3v3.service
 RUN chmod 644 /lib/systemd/system/configure-interface-board.service
+RUN chmod 644 /lib/systemd/system/can0.service
 
-RUN systemctl enable turn-on-3v3.service
 RUN systemctl enable configure-interface-board.service
+
+# Safe to enable at build time: can0.service requires the can0 device unit, so
+# it stays inactive until the mcp2515 overlay is applied and the Pi rebooted
+RUN systemctl enable can0.service
